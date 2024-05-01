@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'authentication/css/styles.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="{% static 'authentication/js/script.js' %}" defer></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js" defer></script>
+    <title>User Page</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <h2>Welcome, {{ user.first_name }}</h2>
+            <p>Your City: {{ user.city|default:"Cambridge" }}</p>
+            
+            {% if default_city %}
+            <p><strong>Note:</strong> You are currently viewing weather for {{ default_city }}.</p>
+            {% endif %}
+
+            <form class="form" method="post">
+                {% csrf_token %}
+                {{ city_form.as_p }}
+                <button type="submit" class="button">Update City</button>
+            </form>
+
+            {% if current_weather %}
+            <div class="weather-section">
+                <h3>Current Weather:</h3>
+                <p>Temperature: {{ current_weather.temperature }}°C</p>
+                <p>Description: {{ current_weather.description }}</p>
+            </div>
+            {% else %}
+            <p>Current weather information is unavailable.</p>
+            {% endif %}
+
+            <div class="forecast-section">
+                <h3>Daily Forecast </h3>
+                <h4>Swipe to view next day</h4>
+                {% if forecast %}
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        {% for day in forecast %}
+                        <div class="swiper-slide">
+                            <div class="forecast-box">
+                                <p>Date: {{ day.date }}</p>
+                                <p>Temperature: {{ day.temperature }}°C</p>
+                                <p>Description: {{ day.description }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+                {% else %}
+                <p>Daily forecast information is unavailable.</p>
+                {% endif %}
+            </div>
+
+            <a href="{% url 'authentication:index' %}" class="button">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
